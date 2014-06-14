@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Elaboracion de Numeros aleatorios</title>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/assets/styles/screen.css">	
+		<script src="/assets/scripts/jquery.js" type="text/javascript"></script>
+		<!-- xeditable 
+		<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+		<!-- jQuery -->
+		<script src="/assets/scripts/main.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<div class="container">
+			<form class="form" method="POST" role="form">
+				<legend>Generador de numeros aleatorios</legend>
+				<div class="form-group">
+					<label for="period">Periodo</label>
+					<input type="text" class="form-control" id="period" placeholder="Ingrese el periodo">
+				</div>
+				<div class="form-group">
+					<label for="c">Numero primo respecto al <strong>a</strong></label>
+					<input type="text" class="form-control" id="c" placeholder="Ingrese C">
+				</div>
+				<div class="form-group">
+					<label for="a">Valor de <strong>a</strong> de la forma (1 + 4k)</label>
+					<input type="text" class="form-control" id="a" placeholder="Ingrese un valor para a">
+				</div>
+				<div class="form-group">
+					<label for="seed">Semilla</label>
+					<input type="text" class="form-control" id="seed" placeholder="Ingrese una semilla">
+				</div>
+				<div class="form-group text-right">
+					<button id="generator" class="btn btn-success">Generar</button>
+				</div>
+			</form>
+			<div class="results">
+				<div id="msg"></div>
+				<table class="result-data"></table>
+			</div>
+		</div>
+	</body>
+</html>
