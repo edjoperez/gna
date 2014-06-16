@@ -85,6 +85,11 @@ fillRandom = function(){
 	$(".results #msg").html(st);
 }
 
+getRandom = function(){
+    seeds.xi = ((seeds.a * seeds.xi + seeds.c) % seeds.m);
+    return ((seeds.a * seeds.xi + seeds.c) % seeds.m) / seeds.m;
+}
+
 //Animaciones y logica UI
 animations = function(){
 	$(".panel-heading").click(function(){
@@ -98,14 +103,17 @@ animations = function(){
 }
 
 //Distribuciones para las GNA
-calcExponential = function(x){ return -x*Math.log(1-getRandom());}
+//Distribucion Exponencial
+calcDistE = function(x){ return -x*Math.log(1-getRandom());}
 
-calcUniforme = function(a,b){ return a+getRandom()*(b-a);}
+//Distribucion Uniforme
+calcDistU = function(a,b){ return a+getRandom()*(b-a);}
 
-calcNormal = function(x,s){
+//Distribucion Normal
+calcDistN = function(x,s){
 	c = 0;
 	for (var i = 0; i < 12; i++) c+= getRandom();
-	return x +s*(c-6);
+	return x + s*(c-6);
 }
 
 //DEFINIR
