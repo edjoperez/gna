@@ -1,9 +1,18 @@
+// seeds = {
+// p:null, //Period
+// m:0, //m
+// c:null, //c
+// a:null,//a
+// xi:null //Seed
+// }
+
+//Default Values
 seeds = {
 p:null, //Period
-m:0, //m
-c:null, //c
-a:null,//a
-xi:null //Seed
+m:67108864, //m
+c:13, //c
+a:17,//a
+xi:777 //Seed
 }
 
 $(function(){
@@ -16,6 +25,7 @@ $(function(){
 			fillRandom();
 		}
 	});
+	animations();
 });
 
 getValues = function(){
@@ -23,7 +33,7 @@ getValues = function(){
 	seeds.p = parseInt($("#period").val());
 	seeds.c = parseInt($("#c").val());
 	seeds.a = parseInt($("#a").val());
-	seeds.xi = $("#seed").val().length != 0? $("seed").val() : parseInt(Math.random()*100);
+	seeds.xi = $("#seed").val().length != 0? $("#seed").val() : parseInt(Math.random()*100);
 
 	//VALIDACIONES
 	//Valida si los valores son numeros
@@ -71,10 +81,37 @@ calcM = function(){
 
 fillRandom = function(){
 	st = "";
-	for (var i = 0; seeds.m > i; i++) {
-		st += i+1 + " - " + ((seeds.a * seeds.xi + seeds.c) % seeds.m) / seeds.m + "<br>";
-        seeds.xi = ((seeds.a * seeds.xi + seeds.c) % seeds.m);
-	};
+	for (var i = 0; seeds.m > i; i++) st += i+1 + " - " + getRandom()+ "<br>";
 	$(".results #msg").html(st);
-
 }
+
+//Animaciones y logica UI
+animations = function(){
+	$(".panel-heading").click(function(){
+		if($(this).next(".panel-body").is(":visible"))
+			$(this).next(".panel-body:visible").slideUp("fast");
+			else{
+				$(".panel-body:visible").slideUp("fast");
+				$(this).next(".panel-body").slideToggle("fast");
+			}
+	});
+}
+
+//Distribuciones para las GNA
+calcExponential = function(x){ return -x*Math.log(1-getRandom());}
+
+calcUniforme = function(a,b){ return a+getRandom()*(b-a);}
+
+calcNormal = function(x,s){
+	c = 0;
+	for (var i = 0; i < 12; i++) c+= getRandom();
+	return x +s*(c-6);
+}
+
+//DEFINIR
+/*
+	- Cantidad de arribos
+	- Definir el numero de evento en que acabara o el minuto
+	- Distribucion de arribos y servicio
+	- Adaptar el algoritmo a 2 servidores y 1 cola
+*/

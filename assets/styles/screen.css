@@ -5,3 +5,10 @@ div.container
 div#msg{
 	color:red;
 }
+div.panel-heading{
+	cursor:pointer;
+	font-weight: bold;
+}
+div.panel-body{
+	display: none;
+}
