@@ -8,13 +8,18 @@ var num_cuts_delayed, next_event_type, total_of_delays, area_num_in_q, area_serv
 
 var server_status, num_in_q, time_last_event = null;
 
-var mean_interarrival = null;
+var mean_interarrival, mean_service = null;
+
+var time_next_event = [];
+var time_arrival = [];
 
 main = function(){
 	//Define variables
 	num_events = 2;
-	num_delays_required = 5;
-	mean_interarrival = 10.8;//Param Entrada - Promedio
+	
+	num_delays_required = 14;
+	mean_interarrival = 11.3;//Param Entrada - Promedio
+	mean_service = 16.3;
 
 	//PRINT STUFF
 
@@ -48,7 +53,7 @@ initialize = function(){
 	sim_time = 0; //Inicializa el reloj del simulador
 
 	//Inicializa los variables de estado
-	server_status = 0;
+	server_status = IDLE;
 	num_in_q = 0;
 	time_last_event = 0;
 
@@ -59,8 +64,8 @@ initialize = function(){
 	area_server_status = 0;
 
 	//Inicializa la lista de eventos
-	time_next_event[1] = sim_time + expon(mean_interarrival);
-	time_next_event[2] = Math.E+30;
+	time_next_event[0] = sim_time + expon(mean_interarrival);
+	time_next_event[1] = Math.E+30;
 }
 
 
@@ -69,17 +74,16 @@ timing = function(){
 	i = null;
 	min_time_next_event = Math.E+29;
 	next_event_type = 0;
-
+	console.log(time_next_event);
+	console.log(min_time_next_event);
 	for (var i = 0; i <= num_events; i++)
 		if (time_next_event[i]<min_time_next_event) {
 			min_time_next_event = time_next_event[i];
 			next_event_type = i;
 		}
 
-	if (next_event_type == 0) {
-		console.log("Lista de eventos vacia a la hora: "+sim_time);
-		return; //Termina la ejecucion
-	};
+	if (next_event_type == 0) throw { name: "Lista de eventos vacia a la hora " ,message: sim_time};
+	//Termina la ejecucion
 
 	//La lista no se encuentra vacia, asi que el reloj del simulador continua
 	sim_time = min_time_next_event;
@@ -89,7 +93,7 @@ arrive = function(){
 	delay = null;
 
 	//Programa el siguiente arribo
-	time_next_event[1] = sim_time + expon(mean_interarrival);
+	time_next_event[0] = sim_time + expon(mean_interarrival);
 
 	//Verifica el estado del servidor
 	if (server_status == BUSY) {
@@ -97,11 +101,10 @@ arrive = function(){
 		num_in_q++;
 
 		//Verifica si existe una condicion de overflow
-		if (num_in_q > Q_LIMIT) {
+		if (num_in_q > Q_LIMIT)
 			//La cola se encuentra en overflow, asi que se detiene la simulacion
-			console.log("Existe un Overflow en el timepo de arribo al tiempo: " + sim_time);
-			return;
-		};
+			throw { name: "Existe un Overflow en el timepo de arribo al tiempo: "  ,message: sim_time};
+
 		//Todavia existe espacio en la cola
 		time_arrival[num_in_q] = sim_time;
 	}
@@ -115,7 +118,7 @@ arrive = function(){
 		server_status = BUSY;
 
 		//Programa una salida
-		time_next_event[2] = sim_time + expon(mean_service);
+		time_next_event[1] = sim_time + expon(mean_service);
 	}
 }
 
@@ -127,7 +130,7 @@ depart = function(){
 	if (num_in_q == 0) {
 		//La cola se encuentra vacia asi que asigna el servidor a disponible
 		server_status = IDLE;
-		time_next_event[2] = Math.E + 30;
+		time_next_event[1] = Math.E + 30;
 	}
 	else{
 		//La cola no esta vacia
@@ -139,7 +142,7 @@ depart = function(){
 
 		//Incrementa el numero de clientes retrasados con partida programada
 		num_cuts_delayed++;
-		time_next_event[2] = sim_time + expon(mean_service);
+		time_next_event[1] = sim_time + expon(mean_service);
 
 		//Desplaza los clinetes una posicion en la cola
 		for (var i = 1; i <= num_in_q; i++)
@@ -169,3 +172,5 @@ update_time_avg_stats = function(){
 expon = function(mean){
 	return -mean * Math.log(1-Math.random());
 }
+
+main();
