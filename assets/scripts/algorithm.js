@@ -64,22 +64,29 @@ initialize = function(){
 	area_server_status = 0;
 
 	//Inicializa la lista de eventos
-	time_next_event[0] = sim_time + expon(mean_interarrival);
-	time_next_event[1] = Math.E+30;
+	time_next_event[0] = sim_time + expon(mean_interarrival); //tiempo entre arribos
+	time_next_event[1] = time_next_event[0] + expon(mean_interarrival);
+	time_next_event[2] = time_next_event[1] + expon(mean_interarrival);
+	time_next_event[3] = Math.pow(10,30);
+	
+	//Arrivos
+	time_arrival[0] = 2;
+	time_arrival[1] = 4;
+	time_arrival[2] = 5.2;
+	time_arrival[3] = 7.8;
+
 }
 
 
 timing = function(){
 	//Inicializa variables
 	i = null;
-	min_time_next_event = Math.E+29;
+	min_time_next_event = Math.pow(10,29);
 	next_event_type = 0;
-	console.log(time_next_event);
-	console.log(min_time_next_event);
-	for (var i = 0; i <= num_events; i++)
-		if (time_next_event[i]<min_time_next_event) {
-			min_time_next_event = time_next_event[i];
-			next_event_type = i;
+	for (var i = 1; i <= num_events; i++)
+		if (time_next_event[i-1]<min_time_next_event) {
+			min_time_next_event = time_next_event[i-1];
+			next_event_type = i; //Obtiene el siguiente evento
 		}
 
 	if (next_event_type == 0) throw { name: "Lista de eventos vacia a la hora " ,message: sim_time};
@@ -93,17 +100,18 @@ arrive = function(){
 	delay = null;
 
 	//Programa el siguiente arribo
-	time_next_event[0] = sim_time + expon(mean_interarrival);
+	time_next_event[0] = sim_time + expon(mean_interarrival); //Deberia indicar el siguiente tiempo entre arribos
 
+	console.log("Ha arribado");
 	//Verifica el estado del servidor
 	if (server_status == BUSY) {
 		//El servidor se encuentra ocupado asi que se incrementa el numero de clientes en cola
 		num_in_q++;
 
-		//Verifica si existe una condicion de overflow
-		if (num_in_q > Q_LIMIT)
-			//La cola se encuentra en overflow, asi que se detiene la simulacion
-			throw { name: "Existe un Overflow en el timepo de arribo al tiempo: "  ,message: sim_time};
+		// //Verifica si existe una condicion de overflow
+		// if (num_in_q > Q_LIMIT)
+		// 	//La cola se encuentra en overflow, asi que se detiene la simulacion
+		// 	throw { name: "Existe un Overflow en el tiempo de arribo al tiempo: "  ,message: sim_time};
 
 		//Todavia existe espacio en la cola
 		time_arrival[num_in_q] = sim_time;
@@ -125,12 +133,13 @@ arrive = function(){
 depart = function(){
 	//Define variables
 	var i, delay = null;
+	console.log("Ha partido");
 
 	//Verifica si la cola se encuentra vacia
 	if (num_in_q == 0) {
 		//La cola se encuentra vacia asi que asigna el servidor a disponible
 		server_status = IDLE;
-		time_next_event[1] = Math.E + 30;
+		time_next_event[1] = Math.pow(10,30);
 	}
 	else{
 		//La cola no esta vacia
@@ -145,7 +154,7 @@ depart = function(){
 		time_next_event[1] = sim_time + expon(mean_service);
 
 		//Desplaza los clinetes una posicion en la cola
-		for (var i = 1; i <= num_in_q; i++)
+		for (var i = 0; i < num_in_q; i++)
 			time_arrival[i] = time_arrival[i+1];
 	}
 
